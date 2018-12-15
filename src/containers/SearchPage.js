@@ -6,17 +6,20 @@ import PropTypes from "prop-types";
 
 class SearchPage extends Component {
     state = {
+        query: '',
         matchedBooks: []
     };
 
-    searchBooks = (query) => {
+    onSearch = (query) => {
+        this.setState({ query });
         if (query !== '') {
             BooksAPI.search(query)
                 .then(books => {
-                    console.log(books);
-                    this.setState({
-                        matchedBooks: Array.isArray(books) ? books : null
-                    });
+                    if (query === this.state.query) {
+                        this.setState({
+                            matchedBooks: Array.isArray(books) ? books : null
+                        });
+                    }
                 });
         } else {
             this.setState({
@@ -28,7 +31,7 @@ class SearchPage extends Component {
     render() {
         return (
             <div className="search-books">
-                <SearchBar searchBooks={this.searchBooks} />
+                <SearchBar query={this.state.query} onSearch={this.onSearch} />
                 <SearchResults
                     books={this.state.matchedBooks}
                     moveBook={this.props.moveBook}
